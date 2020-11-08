@@ -47,14 +47,27 @@ app.route('/Types') // route reitittää pyynnön merkkijonon ja metodin peruste
 
 
 app.route('/Asiakas')
+    //.get( function(request), response){
+    //    if(http.request.query){
+    //        customerController.fetchbyname
+    //    };
+    //.get.customerController.fetchAll(request, response)
+    
     .get(customerController.fetchAll)
-    .post(customerController.create);
+    //.post(customerController.create);
+    
+    .post((req, res) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/plain');
+        res.end("post metodilla mennään");
+    });
+    
 
 app.route('/Asiakas/:id')
     .put(customerController.update)
     .delete(customerController.delete); // esim. 
 //
-
+/*
 app.get('/', function(request, response){
     response.statusCode = 200;
     response.setHeader('Content-Type', 'text/plain');
@@ -69,7 +82,7 @@ app.get('/maali', function(request, response){
     response.setHeader('Content-Type', 'text/plain');
     response.end("Maaleja pukkaa"); 
 });
-
+*/
 
 app.listen(port, hostname, () => {
   console.log(`Server running AT http://${hostname}:${port}/`);
