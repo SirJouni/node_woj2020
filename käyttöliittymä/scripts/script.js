@@ -65,7 +65,7 @@ $().ready (() => {
 
     // tekee post-kutsun palvelimelle ja vastauksen saatuaan jatkaa
     addCust = (param) => {
-        $.post("https://codez.savonia.fi/jussi/api/asiakas/lisaa.php", param)
+        $.post("http://127.0.0.1:3002/Asiakas", param)
             .then((data) => {
                 showAddCustStat(data);
                 $('#addCustDialog').dialog("close");
@@ -153,10 +153,10 @@ showResultInTable = (result, astys) => {
         trstr += "<td>" + element.luontipvm + "</td>\n";
         astys.forEach(asty => {
             if (asty.Avain === element.asty_avain) {
-                trstr += "<td>" + toTitleCase(asty.Selite) + "</td>";
+                trstr += "<td>" + toTitleCase(asty.selite) + "</td>";
             }
         });
-        trstr += `<td><button onclick="deleteCustomer(${element.Avain});" class="deleteBtn">Poista</button></td>`;
+        trstr += `<td><button onclick="deleteCustomer(${element.avain});" class="deleteBtn">Poista</button></td>`;
         trstr += "</tr>\n";
         $('#data tbody').append(trstr);
     });
@@ -167,10 +167,20 @@ deleteCustomer = (key) => {
     if (isNaN(key)) {
         return;
     }
-    $.get({
-        url: `https://codez.savonia.fi/jussi/api/asiakas/poista.php?avain=${key}`,
-        success: (result) => {
+    $.ajax({
+        //url: 'http://localhost:3002/Customer/15', // poistettavan asiakkaan avain tässä 112
+        url: `http://127.0.0.1:3002/Asiakas/${key}`,
+        type: 'DELETE',
+        contentType: 'application/json',
+        //data: JSON.stringify(data), // Tähän voi laittaa datan javascriptin objektina kun tehdään put kysely
+        success: function (result) {
+            // Päivitetään tässä yhteydessä tiedot tauluun
             fetch();
+            console.log(result);
+        },
+        error: function (ajaxContext) {
+            // Jos joku meni pieleen, niin ajetaan tässä koodia. Vaikka sitten päivitetään jotain käyttöliittymällä
+            alert(ajaxContext.responseText)
         }
     });
 }

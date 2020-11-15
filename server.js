@@ -21,8 +21,8 @@ var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
 
     // Jos haluttaisiin rajata hakuja joidenkin ehtojen perusteella, niin määritettäisiin näin: 
-    //res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    //res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
 
     next();
 }
@@ -54,7 +54,7 @@ app.route('/Asiakas')
     //.get.customerController.fetchAll(request, response)
     
     .get(customerController.fetchAll)
-    //.post(customerController.create);
+    .post(customerController.create)
     
     .post((req, res) => {
         res.statusCode = 200;
@@ -66,6 +66,16 @@ app.route('/Asiakas')
 app.route('/Asiakas/:id')
     .put(customerController.update)
     .delete(customerController.delete); // esim. 
+
+app.route('/Customer')
+    .get(customerController.fetchCustomers)
+    .post(customerController.create);
+
+app.route('/Customer/:id')
+    .put(customerController.update)
+    .delete(customerController.delete); // esim. http://127.0.0.1:3002/Asiakas/122
+    
+
 //
 /*
 app.get('/', function(request, response){

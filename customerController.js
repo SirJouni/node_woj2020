@@ -70,11 +70,39 @@ module.exports =
     },
 
     create: function(req, res){
+      var sql = 'INSERT INTO asiakas (nimi, osoite, postinro, postitmp, luontipvm, asty_avain) VALUES ("'+req.body.nimi+'", "'+req.body.osoite+'", "'+req.body.postinro+'", "'+req.body.postitmp+'", "2020-11-13", '+req.body.asty_avain+')';
+      //var sql = 'INSERT INTO asiakas (nimi, osoite, postinro, postitmp, luontipvm, asty_avain) VALUES ("Testi Testinen2", "Microkatu 1", "70100", "Kuopio", "2020-11-13", 1)';
+      connection.query(sql, function (error, results, fields) {
+      //console.log(JSON.stringify(req.query));
       //connection.query
-      console.log("Data = " +JSON.stringify(req.body));
-      console.log(req.body.nimi);
+      // INSERT INTO asiakas (nimi, osoite, postinro, postitmp, luontipvm, asty_avain)
+      // VALUES ("Testi Testinen", "Microkatu 1", "70100", "Kuopio", getdate(), 1)
+      //console.log("Data = " +JSON.stringify(req.body));
+      //console.log(req.body.nimi); // jos tulee inecuei, niin ei avain muuttuujaa
+      //req.json({"status" : "ok", "status_text" : "huhhuh"});
+      //res.send("kutsuttiin ");
     
-      res.send("Kutsuttiin create");
+      //res.send("Kutsuttiin create");
+
+      //VALUES ("")
+      if( error ){
+          console.log("Virhe haettaessa dataa Asiakastyyppi-taulusta: " +error);
+          res.status(500); // Tämä lähtee selaimelle
+          res.json({"status" : "ei toiminut"});
+      } 
+      else {
+        console.log("Data = " +JSON.stringify(results));
+        res.json(results);
+        //res.json({"status" : "ok"}); //onnistunut data lähetetään selimelle(tai muualle)
+      }
+    //});
+    //INSERT INTO asiakas(nimi, osoite, postinro, postitmp, luontipvm, asty_avain)
+    //VALUES("Testi Testinen", "Microkatu 1", "71800", "Siilinjarvi", CAST(GETDATE() AS Date), 1)
+    //riittää kuvankaappaus postmanista
+    console.log("Data = " + JSON.stringify(req.body));
+    console.log(req.body.nimi);
+    res.send("Kutsuttiin create");
+    })
     },
 
     update: function(req, res){
@@ -82,9 +110,49 @@ module.exports =
     },
 
     delete : function (req, res) {
-      console.log("Body = " + JSON.stringify(req.body));
-        console.log("Params = " + JSON.stringify(req.params));
+      var sql = 'DELETE FROM asiakas WHERE avain = ' +req.params.id;
 
-        res.send("Kutsuttiin delete");
+      connection.query(sql, function (error, results, fields) {
+        if( error ){
+          console.log("Virhe poistaessa asiakastyyppia: " +error);
+          res.status(500); // Tämä lähtee selaimelle, emt mita tahan laiittaa
+          res.json({"status" : "ei toiminut"});
+        } 
+        else {
+          console.log("Data = " +JSON.stringify(results));
+          res.json({"status" : "ok"}); //onnistunut data lähetetään selimelle(tai muualle)
+        }
+      })
+
+      console.log("Body = " + JSON.stringify(req.body));
+      console.log("Params = " + JSON.stringify(req.params.id));
+
+      res.send("Kutsuttiin delete");
+    },
+
+    fetchCustomers: function(req, res) {
+      console.log(req.query.asty_avain);
+      var sql = 'SELECT avain, nimi, osoite, postinro, postitmp, luontipvm, asty_avain FROM asiakas where 1= 1';
+      if(req.query.nimi != null && req.query.nimi != ""){
+          sql = sql + " and nimi like '" +req.query.nimi + "%'";
+      }
+      if(req.query.osoite != null && req.query.osoite != ""){
+          sql = sql + " and osoite like '" + req.query.osoite + "%'";
+      }
+      if(req.query.asty_avain != null && req.query.asty_avain != ""){
+          sql += " and asty_avain=" +req.query.asty_avain;
+      }
+
+      connection.query(sql, function(error, results, fields){
+        if( error ){
+          console.log("Virhe haettaessa Asiakas-taulusta: " +error);
+          res.status(500); // Tämä lähtee selaimelle, emt mita tahan laiittaa
+          res.json({"status" : "ei toiminut"});
+        } 
+        else {
+          console.log("Data = " +JSON.stringify(results));
+          res.json({"status" : "ok"}); //onnistunut data lähetetään selimelle(tai muualle)
+        }
+      })
     }
 }
