@@ -82,6 +82,33 @@
             </form>
         </div>
     </div>
+
+
+    <div class="updateCustDialog" id="updateCustDialog" title="Asiakkaan muokkaaminen">
+        <div class="updateCustDiv" id="updateCustDiv">
+            <form>
+                <fieldset style="margin-bottom: 1rem;">
+                    <legend>Asiakkaan tiedot</legend>
+                    <div class="gridContainer">
+                        <label for="updatecustName">Nimi</label>
+                        <input type="text" name="nimi" id="updatecustName">
+                        <label for="updatecustAddress">Osoite</label>
+                        <input type="text" name="osoite" id="updatecustAddress">
+                        <label for="updatecustPostNbr">Postinumero</label>
+                        <input type="text" name="postinro" id="updatecustPostNbr">
+                        <label for="updatecustPostOff">Postitoimipaikka</label>
+                        <input type="text" name="postitmp" id="updatecustPostOff">
+                        <label for="updatecustType">Asiaskastyyppi: </label>
+                        <select name="asty_avain" class="custType" id="updatecustCustType">
+                            <option value="empty" selected disabled>Valitse asiakastyyppi...</option>
+                        </select>
+                    </div>
+                </fieldset>
+                <p id="warning" class="warning">Kaikki kentät ovat pakollisia!</p>
+                <input type="submit" value="Muokkaa" id="updateCustSubmit" >
+            </form>
+        </div>
+    </div>
     
 </body>
 </html>

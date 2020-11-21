@@ -1,5 +1,6 @@
 $().ready (() => {
     let astys = {};
+    var id = 0;
 
     // haetaan asiakastyypit
     $.get({
@@ -90,6 +91,35 @@ $().ready (() => {
             $('#addCustDialog').dialog("open");
         }
     });
+
+    let updatedialog = $('#updateCustDialog').dialog({
+        autoOpen: false,
+        modal: true,
+        resizable: false,
+        minWidth: 400,
+        width: 'auto',
+        close: function(){
+            updateform[0].reset();
+            allFields.removeClass("ui-state-error");
+        }
+    });
+
+        let updateform = updatedialog.find("form")
+        .on("submit", (event) => {
+            event.preventDefault();
+            updateCustomer(id);
+        }
+    );
+    updateCust = (param) => {
+        $.put("http://127.0.0.1:3002/Asiakas/", param)
+            .then((data) => {
+                showAddCustStat(data);
+                $('#updateCustDialog').dialog("close");
+                fetch();
+
+            });
+    }
+        
 });
 
 // tarkistaa onko dialogin kentät täytetty ja näyttää varoitukset jos ei
@@ -157,6 +187,7 @@ showResultInTable = (result, astys) => {
             }
         });
         trstr += `<td><button onclick="deleteCustomer(${element.avain});" class="deleteBtn">Poista</button></td>`;
+        trstr += `<td><button onclick="preupdateCustomer(${element.avain});" class="deleteBtn">Päivitä</button></td>`;
         trstr += "</tr>\n";
         $('#data tbody').append(trstr);
     });
@@ -184,6 +215,46 @@ deleteCustomer = (key) => {
         }
     });
 }
+
+preupdateCustomer = (key) => {
+    if (isNaN(key)) {
+        return;
+    }
+    id = key;
+    console.log("avataan muokkausikkuna id=" +id);
+    $('#updateCustDialog').dialog("open");
+}
+
+updateCustomer = (key) => {
+    if (isNaN(key)) {
+        return;
+    }
+    
+    // avataan dialogi
+    //$('#updateCustDialog').dialog("open");
+    console.log("muokataan kayttajaa! id=" +id);
+    $.ajax({
+        //url: 'http://localhost:3002/Customer/15', // poistettavan asiakkaan avain tässä 112
+        url: `http://127.0.0.1:3002/Asiakas/${id}`,
+        type: 'PUT',
+        contentType: 'application/json',
+        //data: JSON.stringify(data), // Tähän voi laittaa datan javascriptin objektina kun tehdään put kysely
+        success: function (result) {
+            // Päivitetään tässä yhteydessä tiedot tauluun
+            fetch();
+            console.log(result);
+        },
+        error: function (ajaxContext) {
+            // Jos joku meni pieleen, niin ajetaan tässä koodia. Vaikka sitten päivitetään jotain käyttöliittymällä
+            alert(ajaxContext.responseText)
+        }
+    });
+}
+
+
+
+
+
 
 toTitleCase = (str) => {
     return str.replace(

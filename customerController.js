@@ -102,11 +102,46 @@ module.exports =
     console.log("Data = " + JSON.stringify(req.body));
     console.log(req.body.nimi);
     res.send("Kutsuttiin create");
+    
     })
     },
 
-    update: function(req, res){
+    fetchOneCustomer: function(req, res){
+      var sql = 'SELECT avain, nimi, osoite, postinro, postitmp, luontipvm FROM asiakas WHERE avain=' + req.params.id;
+      connection.query(sql, function(error, results){
+        if( error ){
+          console.log("Virhe haettaessa yhtä Asiakasta: " +error);
+          res.status(500); // Tämä lähtee selaimelle
+          res.json({"status" : "ei toiminut"});
+      } 
+      else {
+        console.log("Data = " +JSON.stringify(results));
+        res.json(results);
+        //res.json({"status" : "ok"}); //onnistunut data lähetetään selimelle(tai muualle)
+      }
+      })
+    },
 
+    update: function(req, res){
+      //UPDATE asiakas SET nimi="Pete Pata" WHERE avain=12;
+      var nimi = req.query.nimi;
+
+
+      var sql = 'UPDATE asiakas SET nimi="Oletus nimi", osoite="oletus osoite", postinro="70100" WHERE avain = ' +req.params.id;
+      connection.query(sql, function(error, results){
+        if( error ){
+          console.log("Virhe haettaessa dataa Asiakastyyppi-taulusta: " +error);
+          res.status(500); // Tämä lähtee selaimelle
+          res.json({"status" : "ei toiminut"});
+      } 
+      else {
+        console.log("Data = " +JSON.stringify(results));
+        res.json(results);
+        //res.json({"status" : "ok"}); //onnistunut data lähetetään selimelle(tai muualle)
+      }
+      })
+      console.log("Body =" +JSON.stringify(req.body));
+      console.log("Params =" + JSON.stringify(req.params));
     },
 
     delete : function (req, res) {
@@ -131,7 +166,7 @@ module.exports =
     },
 
     fetchCustomers: function(req, res) {
-      console.log(req.query.asty_avain);
+      console.log("haetaan kaikki nimet!, "+req.query.asty_avain);
       var sql = 'SELECT avain, nimi, osoite, postinro, postitmp, luontipvm, asty_avain FROM asiakas where 1= 1';
       if(req.query.nimi != null && req.query.nimi != ""){
           sql = sql + " and nimi like '" +req.query.nimi + "%'";

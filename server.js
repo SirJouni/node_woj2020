@@ -64,6 +64,7 @@ app.route('/Asiakas')
     
 
 app.route('/Asiakas/:id')
+    .get(customerController.fetchOneCustomer)
     .put(customerController.update)
     .delete(customerController.delete); // esim. 
 
